@@ -1,5 +1,8 @@
 from rest_framework import serializers 
 from .models import Product,Order,OrderItem
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -35,8 +38,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
         
         
 class OrderSerializer(serializers.ModelSerializer):
+    order_id = serializers.UUIDField(read_only=True)
     user = serializers.SlugRelatedField(
-        read_only = True,
+        queryset = User.objects.all(),
         slug_field = 'username'
     )
     #read_only = True ensures that it is not required when making an order
