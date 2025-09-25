@@ -29,4 +29,5 @@ celerybeat-schedule
 *.gz
 *.zip
 *.tar
+.http
 node_modules/

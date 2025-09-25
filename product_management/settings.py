@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'silk',
+    'drf_spectacular',
+    'django_filters',
+    
     
     'api',
 ]
@@ -134,4 +137,22 @@ AUTH_USER_MODEL = 'api.User'
 GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    
+}
+
+PECTACULAR_SETTINGS = {
+    'TITLE': 'Product Management API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False
 }
