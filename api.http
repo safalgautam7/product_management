@@ -43,3 +43,56 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ###
 DELETE  http://127.0.0.1:8000/products/3/ HTTP/1.1
+
+
+###
+GET http://127.0.0.1:8000/orders/ HTTP/1.1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTg3NTA5LCJpYXQiOjE3NTg5ODM5MDksImp0aSI6IjNkNzkwZDFkNTkyYzRkMzlhZjcxYjk1NTlhNGZlMzYyIiwidXNlcl9pZCI6MX0.Q9_l2H0zyMWnADfDAcZgKugnTHNJxXcRLTzWxRzyb4I
+
+
+###
+POST http://127.0.0.1:8000/orders/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTYxODY4LCJpYXQiOjE3NTg5NTgyNjgsImp0aSI6IjMyMWI5ZWU4ZjdmYjQwZDU4ZmIwYjc0MzE0NzhmMmFiIiwidXNlcl9pZCI6Mn0.Nz-dvTM1MqGogBYIFj7TicEci2VlZUKzoyW_dhWdr1I
+
+{
+    "status": "Pending",
+    "items" : [
+        {
+            "product": 3,
+            "quantity": 2
+        },
+        {
+            "product": 4,
+            "quantity": 1
+        }
+    ]
+}
+###
+
+PUT http://127.0.0.1:8000/orders/983e2c2f-527d-4466-afaf-4a63e6599701/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTg2Mjc2LCJpYXQiOjE3NTg5ODI2NzYsImp0aSI6ImQ0ODNlMGZiZGE0OTRmZmM4OTFhZmQ1MDZhNjEzZTJhIiwidXNlcl9pZCI6Mn0.shCY_KixUNjqucb87mOK8ktCVz1BkJQW2cxrHhIsMko
+
+{
+    "status": "Pending",
+    "items" : [
+        {
+            "product": 3,
+            "quantity": 3
+        },
+        {
+            "product": 4,
+            "quantity": 1
+        }
+    ]
+}
+
+###
+GET http://127.0.0.1:8000/orders/983e2c2f-527d-4466-afaf-4a63e6599701/ HTTP/1.1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTg2Mjc2LCJpYXQiOjE3NTg5ODI2NzYsImp0aSI6ImQ0ODNlMGZiZGE0OTRmZmM4OTFhZmQ1MDZhNjEzZTJhIiwidXNlcl9pZCI6Mn0.shCY_KixUNjqucb87mOK8ktCVz1BkJQW2cxrHhIsMko
+
+
+###
+GET http://127.0.0.1:8000/orders/8c11296e-bfa0-495e-97fc-79da5c720423/ HTTP/1.1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTg3NTA5LCJpYXQiOjE3NTg5ODM5MDksImp0aSI6IjNkNzkwZDFkNTkyYzRkMzlhZjcxYjk1NTlhNGZlMzYyIiwidXNlcl9pZCI6MX0.Q9_l2H0zyMWnADfDAcZgKugnTHNJxXcRLTzWxRzyb4I

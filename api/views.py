@@ -1,23 +1,21 @@
 from django.db.models import Max
-from rest_framework.views import APIView
-from .serializers import *
-from api.models import Product,Order, OrderItem
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.http import JsonResponse
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import generics
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAdminUser,
-    AllowAny,
-)
-from rest_framework.views import APIView
-from rest_framework import viewsets
-from api.filters import ProductFilter,InStockFilterBackend
-from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.pagination import PageNumberPagination,LimitOffsetPagination
+from rest_framework import filters, generics, viewsets
+from rest_framework.decorators import api_view,action
+from rest_framework.pagination import (LimitOffsetPagination,
+                                       PageNumberPagination)
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from api.filters import InStockFilterBackend, OrderFilter, ProductFilter
+from api.models import Order, OrderItem, Product
+
+from .serializers import *
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
@@ -39,7 +37,16 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     # pagination_class.page_size_query_param='size'
     # pagination_class.max_page_size=6
     
-    pagination_class=LimitOffsetPagination
+    pagination_class=None
+    
+    @method_decorator(cache_page(60 * 15 , key_prefix='product_list'))
+    def list(self,request,*args, **kwargs):
+        return super().list(request,*args,**kwargs)
+    
+    def get_queryset(self):
+        import time
+        time.sleep(2)
+        return super().get_queryset()
     
     
     def get_permissions(self):
@@ -65,16 +72,36 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.prefetch_related('items__product').all()
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     pagination_class = None
+    filterset_class = OrderFilter
+    filter_backends=[DjangoFilterBackend]
+    
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
+    
+    def get_serializer_class(self):
+        #can also check if POST: if self.request.method == 'POST'
+        if self.action == 'create' or self.action == 'update':
+            return OrderCreateSerializer
+        return super().get_serializer_class()
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not self.request.user.is_staff:
+            qs = qs.filter(user=self.request.user)
+        return qs
+    
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path = 'user-orders',
+        )
+    def user_orders(self,request):
+        orders = self.get_queryset().filter(user=request.user)
+        serializer = self.get_serializer(orders,many=True)
+        return Response(serializer.data)
 
-    
-# class OrderListAPIView(generics.ListAPIView):
-#     queryset = Order.objects.prefetch_related(
-#         'items','items__product',
-#         ).all()
-#     serializer_class = OrderSerializer
-    
     
 # class UserOrderListAPIView(generics.ListAPIView):
 #     permission_classes = [IsAuthenticated]
@@ -108,3 +135,8 @@ class ProductInfoAPIView(APIView):
 #         'max_price': products.aggregate(max_price = Max('price'))['max_price']
 #     })
 #     return Response(serializer.data)
+
+class UserListAPIView(generics.ListAPIView):
+    queryset=User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = None 
